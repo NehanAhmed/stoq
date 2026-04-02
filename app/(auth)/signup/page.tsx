@@ -10,6 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface FormData {
   name: string;
@@ -29,6 +31,7 @@ export default function SignupPage() {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormData>({ name: "", email: "", password: "" });
   const [errors, setErrors] = useState<FormErrors>({});
+  const router = useRouter();
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
@@ -41,7 +44,7 @@ export default function SignupPage() {
     
     if (!formData.email) {
       newErrors.email = "Email is required";
-    } else if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(formData.email)) {
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = "Please enter a valid email";
     }
     
@@ -67,6 +70,8 @@ export default function SignupPage() {
           email: formData.email,
           password: formData.password,
         });
+        toast.success("Account created successfully!");
+        router.push("/dashboard");
         
         if (result.error) {
           setErrors({ root: result.error.message || "Failed to create account" });
