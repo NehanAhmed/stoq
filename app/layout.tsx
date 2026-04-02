@@ -31,7 +31,12 @@ export default function RootLayout({
       className={cn("antialiased", fontMono.variable, "font-sans", outfit.variable)}
     >
       <body>
-        <ThemeProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem={false}
+          disableTransitionOnChange
+        >
           <Toaster
             position="top-right"
             richColors
