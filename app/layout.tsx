@@ -4,6 +4,7 @@ import type { Metadata } from "next"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { cn } from "@/lib/utils";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "Stoq — Your Pantry, Finally Organized",
@@ -30,7 +31,15 @@ export default function RootLayout({
       className={cn("antialiased", fontMono.variable, "font-sans", outfit.variable)}
     >
       <body>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <Toaster
+            position="top-right"
+            richColors
+            closeButton
+            
+          />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   )
