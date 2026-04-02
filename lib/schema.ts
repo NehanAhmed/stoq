@@ -1,4 +1,4 @@
-import { pgTable, text, integer, timestamp, boolean } from "drizzle-orm/pg-core";
+import { pgTable, text, integer, timestamp, boolean, uuid, pgEnum } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
 	id: text("id").primaryKey(),
@@ -48,4 +48,45 @@ export const verification = pgTable("verification", {
 	expiresAt: timestamp("expires_at").notNull(),
 	createdAt: timestamp("created_at"),
 	updatedAt: timestamp("updated_at"),
+});
+
+// Enums for pantry_item
+export const stockStatusEnum = pgEnum("stock_status", ["IN_STOCK", "LOW", "OUT"]);
+export const categoryEnum = pgEnum("category", [
+	"PRODUCE",
+	"DAIRY",
+	"DRY_GOODS",
+	"BEVERAGES",
+	"CONDIMENTS",
+	"OTHER",
+]);
+export const addedViaEnum = pgEnum("added_via", ["RECEIPT", "MANUAL"]);
+
+// House table
+export const house = pgTable("house", {
+	id: uuid("id").primaryKey().defaultRandom(),
+	userId: text("user_id")
+		.notNull()
+		.references(() => user.id, { onDelete: "cascade" }),
+	name: text("name").notNull(),
+	noOfMembers: integer("no_of_members").notNull(),
+	createdAt: timestamp("created_at").notNull().defaultNow(),
+	updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Pantry Item table
+export const pantryItem = pgTable("pantry_item", {
+	id: uuid("id").primaryKey().defaultRandom(),
+	houseId: uuid("house_id")
+		.notNull()
+		.references(() => house.id, { onDelete: "cascade" }),
+	name: text("name").notNull(),
+	quantity: text("quantity").notNull(),
+	unit: text("unit").notNull(),
+	stockStatus: stockStatusEnum("stock_status").notNull().default("IN_STOCK"),
+	category: categoryEnum("category").notNull().default("OTHER"),
+	addedVia: addedViaEnum("added_via").notNull().default("MANUAL"),
+	lastRestockedAt: timestamp("last_restocked_at"),
+	createdAt: timestamp("created_at").notNull().defaultNow(),
+	updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
