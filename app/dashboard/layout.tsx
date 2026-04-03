@@ -34,9 +34,9 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", href: "/dashboard", icon: IconLayoutDashboard, action: "Quick Add"       },
-  { label: "Pantry",    href: "/pantry",    icon: IconArchive,          action: "Add Item"        },
-  { label: "Groceries", href: "/groceries", icon: IconShoppingCart,     action: "Upload Receipt"  },
-  { label: "Recipes",   href: "/recipes",   icon: IconToolsKitchen2,    action: "Find Recipe"     },
+  { label: "Pantry",    href: "/dashboard/pantry",    icon: IconArchive,          action: "Add Item"        },
+  { label: "Groceries", href: "/dashboard/groceries", icon: IconShoppingCart,     action: "Upload Receipt"  },
+  { label: "Recipes",   href: "/dashboard/recipes",   icon: IconToolsKitchen2,    action: "Find Recipe"     },
 ] as const;
 
 const DEFAULT_NAV = NAV_ITEMS[0];
