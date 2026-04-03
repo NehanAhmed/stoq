@@ -3,3 +3,8 @@ export interface House {
     name:string
     noOfMembers:number
 }
+export interface CreateHouseFormData {
+    name: string
+    noOfMembers: number
+    location: string
+}

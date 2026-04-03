@@ -1,6 +1,7 @@
 import { auth } from '@/lib/auth'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
+import Onboarding from './_components/onboarding'
 
 const Page = async () => {
 const session = await auth.api.getSession({
@@ -10,6 +11,14 @@ const session = await auth.api.getSession({
 if(!session?.session) {
     redirect('/login')
 }
+
+if(!session?.user?.onboarding) {
+    return (
+      <Onboarding />
+    )
+}
+
+
   return (
     <div>Page</div>
   )

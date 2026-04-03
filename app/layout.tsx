@@ -4,6 +4,7 @@ import type { Metadata } from "next"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { cn } from "@/lib/utils";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
@@ -43,7 +44,7 @@ export default function RootLayout({
             closeButton
             
           />
-          {children}
+         <TooltipProvider>{children}</TooltipProvider>
         </ThemeProvider>
       </body>
     </html>
