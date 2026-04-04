@@ -11,7 +11,7 @@ const EmptyState = ({
     title: string;
     description: string;
     action: React.ReactNode;
-    icon: React.ReactNode;
+    icon?: React.ReactNode;
 }) => {
   return (
     <div>
