@@ -23,6 +23,15 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
+  user:{
+    additionalFields:{
+      onboarding:{
+        type: "boolean",
+        defaultValue: false, 
+        required: false,
+      }
+    }
+  }
 });
 
 export type Auth = typeof auth;
