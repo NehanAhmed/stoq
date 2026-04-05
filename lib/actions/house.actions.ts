@@ -2,9 +2,8 @@
 
 import { auth } from "../auth"
 import { headers } from "next/headers"
-import { CreateHouseFormData } from "../types/house.types"
-import { createHouse, updateOnboardingStatusByUserId } from "../services/house.services"
 import { createHouseSchema } from "../schemas/house.schema"
+import { createHouseAndCompleteOnboarding } from "../services/house.services"
 
 export const createHouseAction = async (formData: unknown) => {
     try {
@@ -18,32 +17,28 @@ export const createHouseAction = async (formData: unknown) => {
         }
 
         // Validation
-
        const parsedResult = createHouseSchema.safeParse(formData)
        if(!parsedResult.success) {
         throw new Error(parsedResult.error.message)
        }
 
-        // Actual Call
-        const result = await createHouse(userId,parsedResult.data as CreateHouseFormData)
+        // Transactional call
+        const result = await createHouseAndCompleteOnboarding(userId, parsedResult.data)
         if(!result.success) {
-            throw new Error(result.error as string)
+            throw new Error(result.errorMessage)
         }
-        const updateOnboardingStatus = await updateOnboardingStatusByUserId(userId)
-        if(!updateOnboardingStatus.success) {
-            throw new Error(updateOnboardingStatus.error as string)
-        }
+        
         return {
             success: true,
             data: result.data
         }
-        
-        
-
     } catch (error) {
         return {
             success: false,
-            error: error
+            error: {
+                message: error instanceof Error ? error.message : String(error),
+                name: error instanceof Error ? error.name : 'Error'
+            }
         }
     }
 }

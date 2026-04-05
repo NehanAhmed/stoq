@@ -17,9 +17,11 @@ const EmptyState = ({
     <div>
         <Empty className="w-1/2 mx-auto bg-muted/30">
       <EmptyHeader>
-        <EmptyMedia variant="icon">
-          {icon}
-        </EmptyMedia>
+        {icon && (
+          <EmptyMedia variant="icon">
+            {icon}
+          </EmptyMedia>
+        )}
         <EmptyTitle>{title}</EmptyTitle>
         <EmptyDescription>
           {description}

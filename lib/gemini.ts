@@ -1,9 +1,12 @@
+import "server-only"
 
 import { GoogleGenerativeAI } from "@google/generative-ai"
-import { config } from "dotenv"
-config({ path: ".env.local" });
 
+const apiKey = process.env.GOOGLE_API_KEY
+if (!apiKey) {
+    throw new Error("GOOGLE_API_KEY environment variable is required")
+}
 
-export const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY!)
+export const genAI = new GoogleGenerativeAI(apiKey)
 
 

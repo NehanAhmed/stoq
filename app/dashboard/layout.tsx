@@ -30,12 +30,14 @@ interface NavItem {
   href: string;
   icon: TablerIcon;
   action: string;
+  actionHref?: string;
+  actionHandler?: () => void;
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { label: "Dashboard", href: "/dashboard", icon: IconLayoutDashboard, action: "Quick Add"       },
-  { label: "Pantry",    href: "/dashboard/pantry",    icon: IconArchive,          action: "Add Item"        },
-  { label: "Groceries", href: "/dashboard/groceries", icon: IconShoppingCart,     action: "Upload Receipt"  },
+  { label: "Dashboard", href: "/dashboard", icon: IconLayoutDashboard, action: "Quick Add" },
+  { label: "Pantry",    href: "/dashboard/pantry",    icon: IconArchive,          action: "Add Item",       actionHref: "/dashboard/pantry" },
+  { label: "Groceries", href: "/dashboard/groceries", icon: IconShoppingCart,     action: "Upload Receipt", actionHref: "/dashboard/pantry" },
   { label: "Recipes",   href: "/dashboard/recipes",   icon: IconToolsKitchen2,    action: "Find Recipe"     },
 ] as const;
 
@@ -118,12 +120,11 @@ function NavItemButton({ item, isActive, isExpanded }: NavItemProps) {
 
 interface AppLayoutProps {
   children: React.ReactNode;
-  userName?: string;
 }
 
 // ─── Layout ───────────────────────────────────────────────────────────────────
 
-export default function AppLayout({ children, userName = "User Name" }: AppLayoutProps) {
+export default function AppLayout({ children }: AppLayoutProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const pathname = usePathname();
 
@@ -132,7 +133,7 @@ export default function AppLayout({ children, userName = "User Name" }: AppLayou
     [pathname]
   );
 
-  const userInitials = useMemo(() => getInitials(userName), [userName]);
+  const userInitials = "U";
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-background">
@@ -185,7 +186,7 @@ export default function AppLayout({ children, userName = "User Name" }: AppLayou
                 transition={{ duration: 0.15, delay: 0.05 }}
                 className="truncate text-sm text-muted-foreground"
               >
-                {userName}
+                User
               </motion.span>
             )}
           </AnimatePresence>
@@ -209,7 +210,19 @@ export default function AppLayout({ children, userName = "User Name" }: AppLayou
               {activeItem.label}
             </motion.h1>
           </AnimatePresence>
-          <Button size="sm">{activeItem.action}</Button>
+          {activeItem.actionHref || activeItem.actionHandler ? (
+            <Button 
+              size="sm" 
+              onClick={activeItem.actionHandler}
+              asChild={!!activeItem.actionHref}
+            >
+              {activeItem.actionHref ? (
+                <Link href={activeItem.actionHref}>{activeItem.action}</Link>
+              ) : (
+                activeItem.action
+              )}
+            </Button>
+          ) : null}
         </header>
 
         {/* Main Content */}

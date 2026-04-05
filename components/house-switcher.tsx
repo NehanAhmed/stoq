@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import {
   IconChevronDown,
@@ -36,9 +37,18 @@ const houses: House[] = [
 ];
 
 export function HouseSwitcher({ isExpanded }: HouseSwitcherProps) {
+  const router = useRouter();
   const [activeHouse, setActiveHouse] = useState<House>(
     houses.find((h) => h.isActive) || houses[0]
   );
+
+  const handleCreateHouse = () => {
+    router.push("/dashboard/houses/new");
+  };
+
+  const handleManageHouses = () => {
+    router.push("/dashboard/houses/manage");
+  };
 
   return (
     <div className="flex h-14 items-center px-3">
@@ -95,11 +105,11 @@ export function HouseSwitcher({ isExpanded }: HouseSwitcherProps) {
             </DropdownMenuItem>
           ))}
           <DropdownMenuSeparator />
-          <DropdownMenuItem className="gap-2">
+          <DropdownMenuItem className="gap-2" onClick={handleCreateHouse}>
             <IconPlus className="h-4 w-4" />
             <span>Create house</span>
           </DropdownMenuItem>
-          <DropdownMenuItem className="gap-2">
+          <DropdownMenuItem className="gap-2" onClick={handleManageHouses}>
             <IconSettings className="h-4 w-4" />
             <span>Manage houses</span>
           </DropdownMenuItem>

@@ -50,11 +50,12 @@ export async function extractReceiptItems(
   const model = genAI.getGenerativeModel({ model: MODEL })
 
   let rawText: string
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS)
 
   try {
-    // 2. Race the API call against a hard timeout
-    const result = await Promise.race([
-      model.generateContent({
+    const result = await model.generateContent(
+      {
         contents: [
           {
             role: "user",
@@ -65,17 +66,17 @@ export async function extractReceiptItems(
             ],
           },
         ],
-      }),
-      new Promise<never>((_, reject) =>
-        setTimeout(
-          () => reject(new Error("Gemini request timed out after 15s")),
-          TIMEOUT_MS
-        )
-      ),
-    ])
+      },
+      { signal: controller.signal }
+    )
 
+    clearTimeout(timeoutId)
     rawText = result.response.text().trim()
   } catch (err) {
+    clearTimeout(timeoutId)
+    if (err instanceof Error && err.name === "AbortError") {
+      return { success: false, error: "Gemini request timed out after 15s" }
+    }
     const message = err instanceof Error ? err.message : "Unknown error"
     console.error("[gemini] API call failed:", message)
     return { success: false, error: `AI extraction failed: ${message}` }
@@ -89,7 +90,7 @@ export async function extractReceiptItems(
   try {
     parsed = JSON.parse(cleaned)
   } catch {
-    console.error("[gemini] JSON parse failed. Raw response:", rawText)
+    console.error("[gemini] JSON parse failed. Response length:", rawText.length)
     return {
       success: false,
       error: "AI returned an unreadable response. Please try again.",

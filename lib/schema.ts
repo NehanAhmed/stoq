@@ -1,4 +1,4 @@
-import { pgTable, text, integer, timestamp, boolean, uuid, pgEnum } from "drizzle-orm/pg-core";
+import { pgTable, text, integer, timestamp, boolean, uuid, pgEnum, index } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
 	id: text("id").primaryKey(),
@@ -71,9 +71,12 @@ export const house = pgTable("house", {
 		.references(() => user.id, { onDelete: "cascade" }),
 	name: text("name").notNull(),
 	noOfMembers: integer("no_of_members").notNull(),
+	location: text("location"),
 	createdAt: timestamp("created_at").notNull().defaultNow(),
 	updatedAt: timestamp("updated_at").notNull().defaultNow(),
-});
+}, (table) => ({
+	userIdIdx: index("house_user_id_idx").on(table.userId),
+}));
 
 // Pantry Item table
 export const pantryItem = pgTable("pantry_item", {
@@ -90,4 +93,6 @@ export const pantryItem = pgTable("pantry_item", {
 	lastRestockedAt: timestamp("last_restocked_at"),
 	createdAt: timestamp("created_at").notNull().defaultNow(),
 	updatedAt: timestamp("updated_at").notNull().defaultNow(),
-});
+}, (table) => ({
+	houseIdIdx: index("pantry_item_house_id_idx").on(table.houseId),
+}));

@@ -5,7 +5,7 @@ import { extractReceiptItems } from "../services/receipt.services"
 import { SavePantryItemsToDatabaseParams } from "../schemas/receipt.schemas"
 import { db } from "../db"
 import { house, pantryItem } from "../schema"
-import { eq } from "drizzle-orm"
+import { eq, desc } from "drizzle-orm"
 
 export async function scanReceiptAction(formData: FormData) {
     try {
@@ -18,8 +18,11 @@ export async function scanReceiptAction(formData: FormData) {
             return { success: false, error: "User not authenticated" }
         }
 
-        const file = formData.get("file") as File
-        if (!file) return { success: false, error: "No file provided" }
+        const fileValue = formData.get("file")
+        if (!fileValue || !(fileValue instanceof File)) {
+            return { success: false, error: "No valid file provided" }
+        }
+        const file = fileValue
 
         if (file.size > 10 * 1024 * 1024) {
             return { success: false, error: "File size too large" }
@@ -68,12 +71,14 @@ export async function savePantryItemsToDatabase(items: unknown[] |unknown){
         }
         
         const data = parsedList.data.items.map(item => ({
-            ...item,
+            name: item.name,
+            quantity: String(item.quantity),
             unit: item.unit ?? "",
-            houseId
+            houseId,
+            addedVia: "RECEIPT" as const
         }))
 
-        const [pantryItems] = await db
+        const pantryItems = await db
         .insert(pantryItem)
         .values(data)
         .returning()
@@ -92,6 +97,7 @@ export const getHouseIdByUserId = async (userId: string) => {
             .select()
             .from(house)
             .where(eq(house.userId, userId))
+            .orderBy(desc(house.updatedAt))
             .limit(1)
         
         return houseData?.id

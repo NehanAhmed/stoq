@@ -6,5 +6,5 @@ export interface House {
 export interface CreateHouseFormData {
     name: string
     noOfMembers: number
-    location: string
+    location?: string
 }

@@ -40,7 +40,11 @@ const Page = () => {
     const result = await scanReceiptAction(formData)
     console.log(result)
 
-    reset()
+    if (result.success) {
+      reset()
+    } else {
+      alert(result.error || 'Failed to scan receipt')
+    }
   }
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
@@ -93,7 +97,7 @@ const Page = () => {
               <Input
                 id="receipt-upload"
                 type="file"
-                accept="image/*,.pdf"
+                accept="image/*"
                 onChange={(e) => onChange(e.target.files)}
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 ref={ref}
@@ -134,7 +138,7 @@ const Page = () => {
                           : 'Click to upload or drag and drop'}
                       </p>
                       <p className="text-xs text-muted-foreground mt-1">
-                        Images or PDF up to 10MB
+                        Images up to 10MB
                       </p>
                     </div>
                   </>
