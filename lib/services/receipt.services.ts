@@ -1,6 +1,6 @@
 import { genAI } from "../gemini"
 import { EXTRACTION_PROMPT } from "../prompt"
-import { ExtractedItem, ExtractionResponseSchema } from "../schemas/reciept.schemas"
+import { ExtractedItem, ExtractionResponseSchema } from "../schemas/receipt.schemas"
 
 const MODEL = "gemini-2.5-flash-lite"
 const TIMEOUT_MS = 15_000

@@ -10,5 +10,12 @@ export const ExtractionResponseSchema = z.object({
   items: z.array(ExtractedItemSchema).min(1),
 })
 
+export const SavePantryItemsToDatabaseParams = z.object({
+  items: z.array(ExtractedItemSchema).min(1),
+})
+
+
+
+
 export type ExtractedItem = z.infer<typeof ExtractedItemSchema>
 export type ExtractionResponse = z.infer<typeof ExtractionResponseSchema>

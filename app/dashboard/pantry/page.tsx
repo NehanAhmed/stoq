@@ -6,7 +6,7 @@ import { IconUpload, IconCheck, IconX, IconExclamationCircle } from '@tabler/ico
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
-import { scanReceiptAction } from '@/lib/actions/reciept.actions'
+import { scanReceiptAction } from '@/lib/actions/receipt.actions'
 
 interface FormValues {
   receipt: FileList | null
