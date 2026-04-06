@@ -50,6 +50,7 @@ export async function scanReceiptAction(formData: FormData): Promise<ExtractionR
 
 export async function savePantryItemsToDatabase(items: unknown[] |unknown){
     try {
+        console.log('Server received:', items)
         
         const session = await auth.api.getSession({
             headers: await headers(),
@@ -62,6 +63,7 @@ export async function savePantryItemsToDatabase(items: unknown[] |unknown){
 
         const parsedList = SavePantryItemsToDatabaseParams.safeParse(items)
         if (!parsedList.success) {
+            console.error('Parse error:', parsedList.error)
             return { success: false, error: "Invalid items format" }
         }
         

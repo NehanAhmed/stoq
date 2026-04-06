@@ -13,6 +13,7 @@ const Page = async () => {
   }
   return (
     <div>
+      <h1>Hell</h1>
     </div>
   )
 }
