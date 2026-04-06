@@ -1,14 +1,15 @@
 'use client'
 
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useRef } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { IconUpload, IconCheck, IconX, IconExclamationCircle } from '@tabler/icons-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
-import { scanReceiptAction } from '@/lib/actions/receipt.actions'
-import FieldArray from './field-array'
+import { scanReceiptAction, savePantryItemsToDatabase } from '@/lib/actions/receipt.actions'
+import FieldArray, { FieldArrayRef } from './field-array'
 import { ExtractionResult } from '@/lib/services/receipt.services'
+import { ExtractedItem } from '@/lib/schemas/receipt.schemas'
 
 interface FormValues {
   receipt: FileList | null
@@ -16,6 +17,8 @@ interface FormValues {
 
 const EmptyPantryState = () => {
   const [isDragging, setIsDragging] = useState(false)
+  const [extractedItems, setExtractedItems] = useState<ExtractedItem[] | null>(null)
+  const fieldArrayRef = useRef<FieldArrayRef>(null)
 
   const {
     control,
@@ -43,10 +46,7 @@ const EmptyPantryState = () => {
     // console.log(result)
 
     if (result.success) {
-      
-      return(
-        <FieldArray extractedItems={result.items} />
-      )
+      setExtractedItems(result.items)
       reset()
     } else {
       alert(result.error || 'Failed to scan receipt')
@@ -162,6 +162,31 @@ const EmptyPantryState = () => {
         >
           {isSubmitting ? 'Scanning...' : 'Scan Receipt'}
         </Button>
+
+        {extractedItems && (
+          <>
+            <FieldArray 
+              ref={fieldArrayRef}
+              extractedItems={extractedItems} 
+              onSubmit={async (data) => {
+                const result = await savePantryItemsToDatabase({ items: data.items })
+                if (result.success) {
+                  setExtractedItems(null)
+                  // Optionally: refresh pantry list or show success message
+                } else {
+                  alert(result.error || 'Failed to save items')
+                }
+              }} 
+            />
+            <Button 
+              type="button" 
+              className="w-full mt-4"
+              onClick={() => fieldArrayRef.current?.submit()}
+            >
+              Confirm & Add Items
+            </Button>
+          </>
+        )}
       </form>
     </div>
   )

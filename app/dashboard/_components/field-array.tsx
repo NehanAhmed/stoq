@@ -4,24 +4,31 @@ import { Input } from "@/components/ui/input"
 import { ExtractedItem, ExtractionResponse, ExtractionResponseSchema } from "@/lib/schemas/receipt.schemas"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useFieldArray, useForm } from "react-hook-form"
+import { useImperativeHandle, forwardRef } from "react"
 
-const FieldArray = ({extractedItems}:{ extractedItems: ExtractedItem[]}) => {
+export interface FieldArrayRef {
+  submit: () => void
+}
+
+const FieldArray = forwardRef<FieldArrayRef, { extractedItems: ExtractedItem[], onSubmit: (data: ExtractionResponse) => void }>(
+  ({ extractedItems, onSubmit }, ref) => {
     const form = useForm<ExtractionResponse>({
-        resolver: zodResolver(ExtractionResponseSchema),
-        defaultValues:{
-            items: extractedItems
-        }
+      resolver: zodResolver(ExtractionResponseSchema),
+      defaultValues: {
+        items: extractedItems
+      }
     })
 
-    const {fields,append,remove} = useFieldArray({
-        control: form.control,
-        name: "items"
+    const { fields, append, remove } = useFieldArray({
+      control: form.control,
+      name: "items"
     })
 
-    const onSubmit = (data: ExtractionResponse) => {
-        console.log(data)
-    }
-  return (
+    useImperativeHandle(ref, () => ({
+      submit: () => form.handleSubmit(onSubmit)()
+    }))
+
+    return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
 
       {/* Column headers */}
@@ -70,11 +77,10 @@ const FieldArray = ({extractedItems}:{ extractedItems: ExtractedItem[]}) => {
         + Add item
       </Button>
 
-      {/* Submit */}
-      <Button type="submit">Confirm & Save to Pantry</Button>
-
     </form>
   )
-}
+})
+
+FieldArray.displayName = "FieldArray"
 
 export default FieldArray
