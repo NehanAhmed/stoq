@@ -2,10 +2,7 @@ import z from "zod"
 
 export const ExtractedItemSchema = z.object({
   name: z.string().min(1),
-  quantity: z.preprocess(
-    (val) => (typeof val === "string" ? parseFloat(val) : val),
-    z.number().positive().finite()
-  ),
+  quantity:z.string().regex(/^\d+$/),
   unit: z.enum(["g", "kg", "ml", "l", "oz", "lb", "pcs", "pack", "box", "bottle", "can", "jar", "bag"]).nullable(),
 })
 

@@ -6,8 +6,9 @@ import { SavePantryItemsToDatabaseParams } from "../schemas/receipt.schemas"
 import { db } from "../db"
 import { house, pantryItem } from "../schema"
 import { eq, desc } from "drizzle-orm"
+import { ExtractionResult } from "../services/receipt.services"
 
-export async function scanReceiptAction(formData: FormData) {
+export async function scanReceiptAction(formData: FormData): Promise<ExtractionResult> {
     try {
         const session = await auth.api.getSession({
             headers: await headers(),

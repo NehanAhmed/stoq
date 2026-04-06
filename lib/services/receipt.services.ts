@@ -17,7 +17,7 @@ type SupportedMimeType = (typeof SUPPORTED_MIME_TYPES)[number]
 
 
 
-type ExtractionResult =
+export type ExtractionResult =
   | { success: true; items: ExtractedItem[] }
   | { success: false; error: string }
 
@@ -89,6 +89,11 @@ export async function extractReceiptItems(
   let parsed: unknown
   try {
     parsed = JSON.parse(cleaned)
+
+    if(parsed){
+      // console.log(parsed);
+      
+    }
   } catch {
     console.error("[gemini] JSON parse failed. Response length:", rawText.length)
     return {
