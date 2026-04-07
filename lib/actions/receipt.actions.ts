@@ -50,8 +50,6 @@ export async function scanReceiptAction(formData: FormData): Promise<ExtractionR
 
 export async function savePantryItemsToDatabase(items: unknown[] |unknown){
     try {
-        console.log('Server received:', items)
-        
         const session = await auth.api.getSession({
             headers: await headers(),
         })

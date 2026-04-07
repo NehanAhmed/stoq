@@ -11,6 +11,8 @@ import { scanReceiptAction, savePantryItemsToDatabase } from '@/lib/actions/rece
 import FieldArray from './field-array'
 import { ExtractionResult } from '@/lib/services/receipt.services'
 import { ExtractedItem, ExtractionResponse, ExtractionResponseSchema } from '@/lib/schemas/receipt.schemas'
+import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
 
 interface FormValues {
   receipt: FileList | null
@@ -19,6 +21,7 @@ interface FormValues {
 const EmptyPantryState = () => {
   const [isDragging, setIsDragging] = useState(false)
   const [extractedItems, setExtractedItems] = useState<ExtractedItem[] | null>(null)
+  const router = useRouter()
 
   const {
     control: receiptControl,
@@ -62,18 +65,17 @@ const EmptyPantryState = () => {
       resetItems({ items: result.items })
       resetReceipt()
     } else {
-      alert(result.error || 'Failed to scan receipt')
+      toast.error(result.error || 'Failed to scan receipt')
     }
   }
 
   const onItemsSubmit = async (data: ExtractionResponse) => {
-    console.log('Submitting items:', data.items)
     const result = await savePantryItemsToDatabase({ items: data.items })
-    console.log('Save result:', result)
     if (result.success) {
       setExtractedItems(null)
+      router.refresh()
     } else {
-      alert(result.error || 'Failed to save items')
+      toast.error(result.error || 'Failed to save items')
     }
   }
 
