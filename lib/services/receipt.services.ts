@@ -17,7 +17,7 @@ type SupportedMimeType = (typeof SUPPORTED_MIME_TYPES)[number]
 
 
 
-type ExtractionResult =
+export type ExtractionResult =
   | { success: true; items: ExtractedItem[] }
   | { success: false; error: string }
 

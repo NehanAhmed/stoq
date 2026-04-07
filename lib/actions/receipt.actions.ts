@@ -6,8 +6,9 @@ import { SavePantryItemsToDatabaseParams } from "../schemas/receipt.schemas"
 import { db } from "../db"
 import { house, pantryItem } from "../schema"
 import { eq, desc } from "drizzle-orm"
+import { ExtractionResult } from "../services/receipt.services"
 
-export async function scanReceiptAction(formData: FormData) {
+export async function scanReceiptAction(formData: FormData): Promise<ExtractionResult> {
     try {
         const session = await auth.api.getSession({
             headers: await headers(),
@@ -49,7 +50,6 @@ export async function scanReceiptAction(formData: FormData) {
 
 export async function savePantryItemsToDatabase(items: unknown[] |unknown){
     try {
-        
         const session = await auth.api.getSession({
             headers: await headers(),
         })
@@ -61,6 +61,7 @@ export async function savePantryItemsToDatabase(items: unknown[] |unknown){
 
         const parsedList = SavePantryItemsToDatabaseParams.safeParse(items)
         if (!parsedList.success) {
+            console.error('Parse error:', parsedList.error)
             return { success: false, error: "Invalid items format" }
         }
         
