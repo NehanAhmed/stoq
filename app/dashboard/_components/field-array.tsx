@@ -1,19 +1,19 @@
 'use client'
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ExtractedItem, ExtractionResponse, ExtractedItemSchema } from "@/lib/schemas/receipt.schemas"
-import { Control, UseFieldArrayReturn, Controller } from "react-hook-form"
+import { ManualGroceryItem, ManualGroceryForm } from "@/lib/schemas/grocery.schemas"
+import { Control, Controller, UseFieldArrayReturn } from "react-hook-form"
 
 interface FieldArrayProps {
-  control: Control<ExtractionResponse>
-  fields: UseFieldArrayReturn<ExtractionResponse, "items", "id">["fields"]
-  append: UseFieldArrayReturn<ExtractionResponse, "items", "id">["append"]
-  remove: UseFieldArrayReturn<ExtractionResponse, "items", "id">["remove"]
+  control: Control<ManualGroceryForm>
+  fields: UseFieldArrayReturn<ManualGroceryForm, "items", "id">["fields"]
+  append: UseFieldArrayReturn<ManualGroceryForm, "items", "id">["append"]
+  remove: UseFieldArrayReturn<ManualGroceryForm, "items", "id">["remove"]
 }
 
 const UNIT_OPTIONS = [
-  { value: "", label: "None" },
   { value: "g", label: "g" },
   { value: "kg", label: "kg" },
   { value: "ml", label: "ml" },
@@ -29,15 +29,15 @@ const UNIT_OPTIONS = [
   { value: "bag", label: "bag" },
 ] as const
 
-function getDefaultExtractedItem(): ExtractedItem {
+function getDefaultItem(): ManualGroceryItem {
   return {
-    name: "New item",
+    name: "",
     quantity: "1",
     unit: null,
   }
 }
 
-const FieldArray = ({ control, fields, append, remove }: FieldArrayProps) => {
+function FieldArray({ control, fields, append, remove }: FieldArrayProps) {
   return (
     <div>
       <div className="grid grid-cols-[1fr_120px_100px_40px] gap-2 mb-2">
@@ -56,6 +56,7 @@ const FieldArray = ({ control, fields, append, remove }: FieldArrayProps) => {
             control={control}
             render={({ field: { onChange, value } }) => (
               <Select
+
                 value={value ?? ""}
                 onValueChange={(val) => onChange(val === "" ? null : val)}
               >
@@ -76,7 +77,7 @@ const FieldArray = ({ control, fields, append, remove }: FieldArrayProps) => {
         </div>
       ))}
 
-      <Button type="button" onClick={() => append(getDefaultExtractedItem())}>
+      <Button type="button" onClick={() => append(getDefaultItem())}>
         + Add item
       </Button>
     </div>
