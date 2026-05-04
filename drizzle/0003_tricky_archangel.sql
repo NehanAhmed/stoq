@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "pantry_item_house_name_unique_idx" ON "pantry_item" USING btree ("house_id",lower("name"));

@@ -5,7 +5,7 @@ import { extractReceiptItems } from "../services/receipt.services"
 import { SavePantryItemsToDatabaseParams } from "../schemas/receipt.schemas"
 import { db } from "../db"
 import { house, pantryItem } from "../schema"
-import { eq, desc } from "drizzle-orm"
+import { eq, desc, inArray, and, sql } from "drizzle-orm"
 import { ExtractionResult } from "../services/receipt.services"
 
 export async function scanReceiptAction(formData: FormData): Promise<ExtractionResult> {
@@ -40,7 +40,7 @@ export async function scanReceiptAction(formData: FormData): Promise<ExtractionR
 
         return extractReceiptItems(base64, mimeType)
 
-        
+
 
     } catch (error) {
         console.error("Error scanning receipt:", error)
@@ -48,7 +48,7 @@ export async function scanReceiptAction(formData: FormData): Promise<ExtractionR
     }
 }
 
-export async function savePantryItemsToDatabase(items: unknown[] |unknown){
+export async function savePantryItemsToDatabase(items: unknown[] | unknown) {
     try {
         const session = await auth.api.getSession({
             headers: await headers(),
@@ -64,27 +64,40 @@ export async function savePantryItemsToDatabase(items: unknown[] |unknown){
             console.error('Parse error:', parsedList.error)
             return { success: false, error: "Invalid items format" }
         }
-        
+
 
         const houseId = await getHouseIdByUserId(userId)
         if (!houseId) {
             return { success: false, error: "House not found for user" }
         }
-        
+
         const data = parsedList.data.items.map(item => ({
-            name: item.name,
+            name: item.name.toLowerCase(),
             quantity: String(item.quantity),
             unit: item.unit ?? "",
             houseId,
             addedVia: "RECEIPT" as const
         }))
 
-        const pantryItems = await db
-        .insert(pantryItem)
-        .values(data)
-        .returning()
 
-        return { success: true, data: pantryItems }
+
+        const result = await db
+            .insert(pantryItem)
+            .values(data)
+            .onConflictDoUpdate({
+                target: [pantryItem.houseId, pantryItem.name],
+                set: {
+                    quantity: sql`(${pantryItem.quantity}::float + excluded.quantity::float)::text`,
+                    stockStatus: sql`'IN_STOCK'`,
+                    addedVia: sql`'RECEIPT'`,
+                    lastRestockedAt: sql`now()`,
+                    updatedAt: sql`now()`,
+                },
+            })
+            .returning()
+
+
+        return { success: true, data: result }
 
     } catch (error) {
         console.error("Error saving pantry items:", error)
@@ -100,7 +113,7 @@ export const getHouseIdByUserId = async (userId: string) => {
             .where(eq(house.userId, userId))
             .orderBy(desc(house.updatedAt))
             .limit(1)
-        
+
         return houseData?.id
     } catch (error) {
         console.error("Error getting house id:", error)

@@ -17,6 +17,9 @@ importers:
       '@neondatabase/serverless':
         specifier: ^1.0.2
         version: 1.0.2
+      '@openrouter/sdk':
+        specifier: ^0.12.24
+        version: 0.12.24
       '@tabler/icons-react':
         specifier: ^3.41.1
         version: 3.41.1(react@19.2.4)
@@ -1210,6 +1213,9 @@ packages:
 
   '@open-draft/until@2.1.0':
     resolution: {integrity: sha512-U69T3ItWHvLwGg5eJ0n3I62nWuE6ilHlmz7zM0npLBRvPRd7e6NYmg54vvRtP5mZG7kZqZCFVdsTWo7BPtBujg==}
+
+  '@openrouter/sdk@0.12.24':
+    resolution: {integrity: sha512-pHybqvkWZUvg/uM99+ShHgDKg/iA3MU2MZdlZvoenmK/3cnG6jW1zROb+tyd6iEAZwcqb2+2QoahgLbJgo/9Sw==}
 
   '@opentelemetry/api@1.9.1':
     resolution: {integrity: sha512-gLyJlPHPZYdAk1JENA9LeHejZe1Ti77/pTeFm/nMXmQH/HFZlcS/O2XJB+L8fkbrNSqhdtlvjBVjxwUYanNH5Q==}
@@ -5549,6 +5555,10 @@ snapshots:
       outvariant: 1.4.3
 
   '@open-draft/until@2.1.0': {}
+
+  '@openrouter/sdk@0.12.24':
+    dependencies:
+      zod: 4.3.6
 
   '@opentelemetry/api@1.9.1': {}
 

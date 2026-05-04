@@ -22,6 +22,20 @@
       "when": 1775400619131,
       "tag": "0002_wonderful_alice",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1777703881525,
+      "tag": "0003_tricky_archangel",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1777712591957,
+      "tag": "0004_productive_terrax",
+      "breakpoints": true
     }
   ]
 }

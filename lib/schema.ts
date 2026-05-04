@@ -1,4 +1,5 @@
-import { pgTable, text, integer, timestamp, boolean, uuid, pgEnum, index } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
+import { pgTable, text, integer, timestamp, boolean, uuid, pgEnum, index, uniqueIndex, jsonb } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
 	id: text("id").primaryKey(),
@@ -95,4 +96,29 @@ export const pantryItem = pgTable("pantry_item", {
 	updatedAt: timestamp("updated_at").notNull().defaultNow(),
 }, (table) => ({
 	houseIdIdx: index("pantry_item_house_id_idx").on(table.houseId),
+	houseNameUniqueIdx: uniqueIndex("pantry_item_house_name_unique_idx")
+        .on(table.houseId, table.name),
+
 }));
+
+export type RecipeIngredient = {
+    name: string;
+    quantity: string;
+    unit: string;
+};
+
+export const recipes = pgTable("recipes", {
+    id: uuid("id").primaryKey().defaultRandom(),
+    houseId: uuid("house_id")
+        .notNull()
+        .references(() => house.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    tagline: text("tagline").notNull(),
+    ingredients: jsonb("ingredients").notNull().$type<RecipeIngredient[]>(),
+    instructions: text("instructions").notNull(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+}, (table) => ({
+    houseIdIdx: index("recipes_house_id_idx").on(table.houseId),
+}));
+
