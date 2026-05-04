@@ -18,7 +18,7 @@ interface FormValues {
   receipt: FileList | null
 }
 
-const EmptyPantryState = () => {
+const ReceiptScan = () => {
   const [isDragging, setIsDragging] = useState(false)
   const [extractedItems, setExtractedItems] = useState<ExtractedItem[] | null>(null)
   const router = useRouter()
@@ -39,7 +39,6 @@ const EmptyPantryState = () => {
 
   const {
     control: itemsControl,
-    register: itemsRegister,
     handleSubmit: handleItemsSubmit,
     reset: resetItems,
     formState: { isSubmitting: isItemsSubmitting },
@@ -93,16 +92,7 @@ const EmptyPantryState = () => {
   return (
     <div className="container mx-auto py-8">
       {!extractedItems ? (
-        <form onSubmit={handleReceiptSubmit(onReceiptSubmit)} className="max-w-md mx-auto">
-          <div className='flex items-start justify-start gap-2'>
-            <div className='flex items-center justify-center '>
-              <IconExclamationCircle className='w-8 h-8 text-primary' />
-            </div>
-            <div>
-              <h1 className="text-2xl font-semibold ">Nothing in the Pantry yet!</h1>
-              <p className="text-muted-foreground mb-4">Upload a receipt to get started</p>
-            </div>
-          </div>
+        <form onSubmit={handleReceiptSubmit(onReceiptSubmit)} className="max-w-md">
           <Controller
             name="receipt"
             control={receiptControl}
@@ -190,9 +180,8 @@ const EmptyPantryState = () => {
         </form>
       ) : (
         <form onSubmit={handleItemsSubmit(onItemsSubmit)} className="max-w-md mx-auto">
-          <FieldArray
+          <FieldArray 
             control={itemsControl}
-            register={itemsRegister}
             fields={fields}
             append={append}
             remove={remove}
@@ -210,4 +199,4 @@ const EmptyPantryState = () => {
   )
 }
 
-export default EmptyPantryState 
+export default ReceiptScan 

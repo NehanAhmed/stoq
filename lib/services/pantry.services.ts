@@ -11,3 +11,13 @@ export const hasPantryItems = async (houseId: string): Promise<boolean> => {
 
     return result.length > 0
 }
+
+export const getAllPantryItems = async(houseId:string) => {
+    const items = await db
+        .select()
+        .from(pantryItem)
+        .where(eq(pantryItem.houseId, houseId))
+        .orderBy(pantryItem.name)
+    
+    return items
+}

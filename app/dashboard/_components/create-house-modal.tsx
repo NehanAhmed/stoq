@@ -47,7 +47,7 @@ const CreateHouseModal = ({ children }: CreateHouseModalProps) => {
     const result = await createHouseAction(values)
 
     if (result.error) {
-      toast.error(result.error as string)
+      toast.error(result.error.message)
       return
     }
 
