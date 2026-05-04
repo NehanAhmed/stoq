@@ -1,7 +1,7 @@
 import { z } from "zod"
 
 export const ManualGroceryItemSchema = z.object({
-  name: z.string().min(1, "Item name is required"),
+  name: z.string().trim().min(1, "Item name is required"),
  quantity: z.string()
   .regex(/^\d+$/, "Quantity must be a positive integer")
   .refine((val) => parseInt(val, 10) > 0, "Quantity must be greater than 0"),

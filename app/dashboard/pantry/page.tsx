@@ -29,10 +29,29 @@ const Page = async () => {
     redirect('/login')
   }
   const houseId = await getHouseIdByUserId(userId)
-  const result = await getPantryItemsByHouseId(houseId!)
+  if (!houseId) {
+    return (
+      <div className="p-4">
+        <h1 className="text-xl font-semibold">No House Found</h1>
+        <p className="text-muted-foreground">Please complete onboarding to set up your house.</p>
+      </div>
+    )
+  }
+
+  const result = await getPantryItemsByHouseId(houseId)
+
+  if (!result.success || !result.data) {
+    return (
+      <div className="p-4">
+        <h1 className="text-xl font-semibold">Error</h1>
+        <p className="text-muted-foreground">{result.error || "Failed to load pantry items"}</p>
+      </div>
+    )
+  }
+
   return (
     <div>
-      <PantryList items={result.data || []} />
+      <PantryList items={result.data} />
     </div>
   )
 }

@@ -1,19 +1,27 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { AiRecipeResponse } from '@/lib/schemas/recipe.schemas'
+import Link from 'next/link'
 import { RecipeParam } from '@/lib/types/recipe.types'
 import { IconChevronRight } from '@tabler/icons-react'
 import React from 'react'
 
-const RecipeCard = ({ name, tagline }: RecipeParam) => {
+interface RecipeCardProps extends RecipeParam {
+  id: string
+}
+
+const RecipeCard = ({ id, name, tagline }: RecipeCardProps) => {
   return (
     <Card>
         <CardContent className='space-y-3'>
             <div>
-            <h1 className='text-2xl font-semibold '>{name}</h1>
+            <h2 className='text-2xl font-semibold'>{name}</h2>
             <p>{tagline}</p>
             </div>
-            <Button>View Recipe <IconChevronRight /></Button>
+            <Button asChild>
+              <Link href={`/dashboard/recipes/${id}`}>
+                View Recipe <IconChevronRight />
+              </Link>
+            </Button>
         </CardContent>
     </Card>
   )

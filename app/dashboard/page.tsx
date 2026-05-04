@@ -26,9 +26,18 @@ const userId = session.user.id
     redirect('/login')
   }
   const houseId = await getHouseIdByUserId(userId)
-  const result = await getPantryItemsByHouseId(houseId!)
-  
-  if(!result.data) {
+  if (!houseId) {
+    return (
+      <div className="p-4">
+        <h1 className="text-xl font-semibold">No House Found</h1>
+        <p className="text-muted-foreground">You need to create a house to get started.</p>
+      </div>
+    )
+  }
+
+  const result = await getPantryItemsByHouseId(houseId)
+
+  if (!result.data) {
     return <div>Failed to load pantry items</div>
   }
 

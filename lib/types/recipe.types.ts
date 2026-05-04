@@ -1,23 +1,17 @@
+import type { RecipeIngredient } from "../schema"
+
 export interface AIInput {
   input: string
-  ingredients: {
-    name: string
-    quantity: string
-    unit: string
-  }[]
+  ingredients: RecipeIngredient[]
 }
 
-export interface RecipeParam{
-  id:string
-  houseId:string
-  name:string
-  tagline:string
-  ingredients:{
-    name: string
-    quantity: string
-    unit: string
-  }[]
-  instructions:string
-  createdAt:Date
-  updatedAt:Date
+export interface RecipeParam {
+  id: string
+  houseId: string
+  name: string
+  tagline: string
+  ingredients: RecipeIngredient[]
+  instructions: string
+  createdAt: Date
+  updatedAt: Date
 }

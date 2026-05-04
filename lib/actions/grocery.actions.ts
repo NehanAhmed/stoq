@@ -7,6 +7,7 @@ import { pantryItem } from "../schema"
 import { ManualGroceryItem, ManualGroceryItemSchema } from "../schemas/grocery.schemas"
 import { getHouseIdByUserId } from "./receipt.actions"
 import { z } from "zod"
+import { sql } from "drizzle-orm"
 
 const SaveManualItemsParamsSchema = z.array(ManualGroceryItemSchema).min(1)
 
@@ -39,7 +40,7 @@ export async function savePantryItemsAction(items: ManualGroceryItem[]): Promise
     }
 
     const data = parsedItems.data.map(item => ({
-      name: item.name,
+      name: item.name.toLowerCase(),
       quantity: String(item.quantity),
       unit: item.unit ?? "",
       houseId,
@@ -51,6 +52,16 @@ export async function savePantryItemsAction(items: ManualGroceryItem[]): Promise
     const savedItems = await db
       .insert(pantryItem)
       .values(data)
+      .onConflictDoUpdate({
+        target: [pantryItem.houseId, pantryItem.name],
+        set: {
+          quantity: sql`(${pantryItem.quantity}::float + excluded.quantity::float)::text`,
+          stockStatus: sql`'IN_STOCK'`,
+          addedVia: sql`'MANUAL'`,
+          lastRestockedAt: sql`now()`,
+          updatedAt: sql`now()`,
+        },
+      })
       .returning()
 
     return { success: true, data: savedItems }

@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useForm } from "react-hook-form"
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { createRecipeAction } from "@/lib/actions/recipe.actions"
 import { IconLoader2, IconCheck, IconExclamationCircle, IconSparkles } from "@tabler/icons-react"
 import { toast } from "sonner"
@@ -12,6 +13,7 @@ import { cn } from "@/lib/utils"
 const RecipeInput = () => {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+  const router = useRouter()
 
   const form = useForm({
     defaultValues: {
@@ -34,6 +36,7 @@ const RecipeInput = () => {
     setSuccess(true)
     toast.success("Recipe generated successfully!")
     form.reset()
+    router.refresh()
 
     setTimeout(() => setSuccess(false), 3000)
   }

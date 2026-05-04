@@ -4,10 +4,11 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ManualGroceryItem, ManualGroceryForm } from "@/lib/schemas/grocery.schemas"
-import { Control, Controller, UseFieldArrayReturn } from "react-hook-form"
+import { Control, Controller, UseFieldArrayReturn, UseFormRegister } from "react-hook-form"
 
 interface FieldArrayProps {
   control: Control<ManualGroceryForm>
+  register: UseFormRegister<ManualGroceryForm>
   fields: UseFieldArrayReturn<ManualGroceryForm, "items", "id">["fields"]
   append: UseFieldArrayReturn<ManualGroceryForm, "items", "id">["append"]
   remove: UseFieldArrayReturn<ManualGroceryForm, "items", "id">["remove"]
@@ -37,7 +38,7 @@ function getDefaultItem(): ManualGroceryItem {
   }
 }
 
-function FieldArray({ control, fields, append, remove }: FieldArrayProps) {
+function FieldArray({ control, register, fields, append, remove }: FieldArrayProps) {
   return (
     <div>
       <div className="grid grid-cols-[1fr_120px_100px_40px] gap-2 mb-2">
@@ -49,8 +50,8 @@ function FieldArray({ control, fields, append, remove }: FieldArrayProps) {
 
       {fields.map((field, index) => (
         <div key={field.id} className="grid grid-cols-[1fr_120px_100px_40px] gap-2 mb-2">
-          <Input {...control.register(`items.${index}.name`)} placeholder="Item name" />
-          <Input {...control.register(`items.${index}.quantity`)} placeholder="Qty" />
+          <Input {...register(`items.${index}.name`)} placeholder="Item name" />
+          <Input {...register(`items.${index}.quantity`)} placeholder="Qty" />
           <Controller
             name={`items.${index}.unit`}
             control={control}

@@ -2,11 +2,43 @@
 import { headers } from "next/headers"
 import { auth } from "../auth"
 import { extractReceiptItems } from "../services/receipt.services"
-import { SavePantryItemsToDatabaseParams } from "../schemas/receipt.schemas"
+import { SavePantryItemsToDatabaseParams, ReceiptItem } from "../schemas/receipt.schemas"
 import { db } from "../db"
 import { house, pantryItem } from "../schema"
-import { eq, desc, inArray, and, sql } from "drizzle-orm"
+import { eq, desc, sql } from "drizzle-orm"
 import { ExtractionResult } from "../services/receipt.services"
+
+// Normalize receipt items: aggregate duplicates by name+unit, detect unit mismatches
+function normalizeReceiptItems(items: ReceiptItem[]): { normalized: ReceiptItem[]; unitMismatches: string[] } {
+  const grouped = new Map<string, ReceiptItem & { totalQuantity: number }>()
+  const unitMismatches: string[] = []
+
+  for (const item of items) {
+    const key = `${item.name.toLowerCase()}-${item.unit}`
+    const existing = grouped.get(key)
+
+    if (existing) {
+      existing.totalQuantity += item.quantity
+    } else {
+      // Check for unit mismatch with different key but same name
+      for (const [, entry] of grouped) {
+        if (entry.name.toLowerCase() === item.name.toLowerCase() && entry.unit !== item.unit) {
+          unitMismatches.push(item.name)
+          break
+        }
+      }
+      grouped.set(key, { ...item, totalQuantity: item.quantity })
+    }
+  }
+
+  const normalized = Array.from(grouped.values()).map(item => ({
+    name: item.name,
+    quantity: item.totalQuantity,
+    unit: item.unit,
+  }))
+
+  return { normalized, unitMismatches }
+}
 
 export async function scanReceiptAction(formData: FormData): Promise<ExtractionResult> {
     try {
@@ -71,15 +103,20 @@ export async function savePantryItemsToDatabase(items: unknown[] | unknown) {
             return { success: false, error: "House not found for user" }
         }
 
-        const data = parsedList.data.items.map(item => ({
+        // Normalize items to handle duplicates and unit mismatches
+        const { normalized, unitMismatches } = normalizeReceiptItems(parsedList.data.items)
+
+        if (unitMismatches.length > 0) {
+            console.warn("Unit mismatches detected:", unitMismatches)
+        }
+
+        const data = normalized.map(item => ({
             name: item.name.toLowerCase(),
             quantity: String(item.quantity),
             unit: item.unit ?? "",
             houseId,
             addedVia: "RECEIPT" as const
         }))
-
-
 
         const result = await db
             .insert(pantryItem)
@@ -96,8 +133,7 @@ export async function savePantryItemsToDatabase(items: unknown[] | unknown) {
             })
             .returning()
 
-
-        return { success: true, data: result }
+        return { success: true, data: result, unitMismatches: unitMismatches.length > 0 ? unitMismatches : undefined }
 
     } catch (error) {
         console.error("Error saving pantry items:", error)

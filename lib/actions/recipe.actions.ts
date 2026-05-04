@@ -8,6 +8,7 @@ import { AIInput } from "../types/recipe.types"
 import { client } from "../openrouter"
 import { SYSTEM_PROMPT } from "../prompt"
 import { aiRecipeResponseSchema } from "../schemas/recipe.schemas"
+import { z } from "zod"
 
 export const createRecipeAction = async (input: string) => {
     try {
@@ -51,7 +52,7 @@ export const createRecipeAction = async (input: string) => {
         
 
         if (!validated.success) {
-            console.error("AI response validation failed:", validated.error.flatten());
+            console.error("AI response validation failed:", z.flattenError(validated.error));
             return { success: false, error: "AI response did not match expected schema" };
         }
 
@@ -83,6 +84,9 @@ const AIRecipeService = async (input: AIInput) => {
                 ],
             }
         });
+        if (!completion?.choices?.length || !completion.choices[0]?.message?.content) {
+            throw new Error("OpenRouter returned no choices or message content");
+        }
         return completion.choices[0].message.content;
     } catch (error) {
         console.error("OpenRouter API error:", error);

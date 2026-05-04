@@ -48,35 +48,36 @@ export async function createHouseAndCompleteOnboarding(
     formData: CreateHouseFormData
 ) {
     try {
-        const [houseRecord] = await db
-            .insert(house)
-            .values({
-                name: formData.name,
-                noOfMembers: formData.noOfMembers,
-                userId
-            })
-            .returning();
+        const result = await db.transaction(async (tx) => {
+            const [houseRecord] = await tx
+                .insert(house)
+                .values({
+                    name: formData.name,
+                    noOfMembers: formData.noOfMembers,
+                    userId
+                })
+                .returning();
 
+            if (!houseRecord) {
+                throw new Error("Failed to create house")
+            }
 
-        if (!houseRecord) {
-            throw new Error("Failed to create house")
-        }
+            const [userRecord] = await tx
+                .update(user)
+                .set({ onboarding: true })
+                .where(eq(user.id, userId))
+                .returning();
 
-        const [userRecord] = await db
-            .update(user)
-            .set({ onboarding: true })
-            .where(eq(user.id, userId))
-            .returning();
+            if (!userRecord) {
+                throw new Error("Failed to update user onboarding status")
+            }
 
-        if (!userRecord) {
-            throw new Error("Failed to update user onboarding status")
-        }
-
-
+            return { houseRecord, userRecord }
+        })
 
         return {
             success: true,
-            data: { houseRecord, userRecord }
+            data: result
         };
     } catch (error) {
         return {

@@ -39,6 +39,7 @@ const EmptyPantryState = () => {
 
   const {
     control: itemsControl,
+    register: itemsRegister,
     handleSubmit: handleItemsSubmit,
     reset: resetItems,
     formState: { isSubmitting: isItemsSubmitting },
@@ -189,8 +190,9 @@ const EmptyPantryState = () => {
         </form>
       ) : (
         <form onSubmit={handleItemsSubmit(onItemsSubmit)} className="max-w-md mx-auto">
-          <FieldArray 
+          <FieldArray
             control={itemsControl}
+            register={itemsRegister}
             fields={fields}
             append={append}
             remove={remove}

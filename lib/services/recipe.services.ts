@@ -4,15 +4,11 @@ import { pantryItem, recipes } from "../schema"
 import { AiRecipeResponse, SaveRecipePayload } from "../schemas/recipe.schemas"
 
 export const getAllPantryItemsByHouseId = async (houseId: string) => {
-    try {
-        const pantryItems = await db 
-        .select({name: pantryItem.name, quantity: pantryItem.quantity, unit: pantryItem.unit})   
+    const pantryItems = await db
+        .select({ name: pantryItem.name, quantity: pantryItem.quantity, unit: pantryItem.unit })
         .from(pantryItem)
         .where(eq(pantryItem.houseId, houseId))
-        return pantryItems
-    } catch (error) {
-        throw error
-    }
+    return pantryItems
 }
 
 export const saveRecipeToDatabase = async (recipe: SaveRecipePayload) => {

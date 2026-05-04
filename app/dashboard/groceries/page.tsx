@@ -74,6 +74,7 @@ const Page = () => {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FieldArray
                 control={form.control}
+                register={form.register}
                 fields={fields}
                 append={append}
                 remove={remove}

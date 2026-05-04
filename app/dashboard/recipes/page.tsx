@@ -11,13 +11,12 @@ const Page = async () => {
         headers: await headers()
     })
 
-    if(!session?.user.id){
-        throw new Error("User not found")
+    if (!session?.user.id) {
         redirect("/login")
     }
     const houseId = await getHouseIdByUserId(session.user.id)
-    if(!houseId){
-        throw new Error("No House Found.")
+    if (!houseId) {
+        redirect("/dashboard/onboarding")
     }
     const result = await fetchAllRecipeByHouseId(houseId)
   return (

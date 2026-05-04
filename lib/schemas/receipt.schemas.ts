@@ -22,3 +22,4 @@ export const SavePantryItemsToDatabaseParams = z.object({
 
 export type ExtractedItem = z.infer<typeof ExtractedItemSchema>
 export type ExtractionResponse = z.infer<typeof ExtractionResponseSchema>
+export type ReceiptItem = z.infer<typeof ExtractedItemSchema>
