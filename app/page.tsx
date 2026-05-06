@@ -22,7 +22,7 @@ export default function Page() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
-      <header className="w-full flex items-center justify-center  border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
+      <header className="w-full flex items-center justify-center border-b border-border bg-background/95 backdrop-blur">
         <div className="container flex h-16 items-center justify-between px-6 sm:px-8 lg:px-12">
           <div className="text-lg font-semibold">Stoq</div>
           <div className="flex items-center gap-4">
@@ -36,7 +36,7 @@ export default function Page() {
               <IconBrandGithub className="h-5 w-5" />
             </a>
             <a 
-              href="https://x.com/@Nehanahmed988" 
+              href="https://x.com/Nehanahmed988" 
               target="_blank" 
               rel="noopener noreferrer"
               className="text-muted-foreground hover:text-foreground transition-colors"
@@ -69,7 +69,7 @@ export default function Page() {
             {/* Subheadline */}
             <p className="mx-auto mb-10 max-w-2xl text-lg text-muted-foreground sm:text-xl">
               Scan receipts, manage pantry automatically, and discover recipes you can cook right now. 
-              The intelligent kitchen assistant you've been waiting for.
+              The intelligent kitchen assistant you&apos;ve been waiting for.
             </p>
             
             {/* CTA Buttons */}
@@ -272,7 +272,7 @@ export default function Page() {
             <div className="space-y-4">
               <h4 className="text-sm font-semibold">Product</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href="#features" className="hover:text-foreground transition-colors">Features</Link></li>
+                <li><Link href="#demo" className="hover:text-foreground transition-colors">Features</Link></li>
                 <li><Link href="#demo" className="hover:text-foreground transition-colors">Demo</Link></li>
                 <li><Link href="/login" className="hover:text-foreground transition-colors">Get Started</Link></li>
               </ul>
@@ -328,7 +328,7 @@ export default function Page() {
                   <IconBrandFacebook className="h-5 w-5" />
                 </a>
                 <a 
-                  href="https://x.com/@Nehanahmed988" 
+                  href="https://x.com/Nehanahmed988" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-muted-foreground hover:text-foreground transition-colors"
@@ -351,7 +351,7 @@ export default function Page() {
           
           <div className="mt-8 border-t border-border pt-8 text-center">
             <p className="text-sm text-muted-foreground">
-              © 2024 Stoq. Built with ❤️ by <a href="https://nehan.vercel.app" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">Nehan Ahmed</a>
+              © 2026 Stoq. Built with ❤️ by <a href="https://nehan.vercel.app" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">Nehan Ahmed</a>
             </p>
           </div>
         </div>
