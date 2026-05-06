@@ -10,6 +10,7 @@ import {
   IconShoppingCart,
   IconToolsKitchen2,
   type TablerIcon,
+  IconLogout,
 } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
 
@@ -18,6 +19,8 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { HouseSwitcher } from "@/components/house-switcher";
+import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -36,9 +39,9 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", href: "/dashboard", icon: IconLayoutDashboard, action: "Quick Add" },
-  { label: "Pantry",    href: "/dashboard/pantry",    icon: IconArchive,          action: "Add Item",       actionHref: "/dashboard/pantry" },
-  { label: "Groceries", href: "/dashboard/groceries", icon: IconShoppingCart,     action: "Upload Receipt", actionHref: "/dashboard/pantry" },
-  { label: "Recipes",   href: "/dashboard/recipes",   icon: IconToolsKitchen2,    action: "Find Recipe"     },
+  { label: "Pantry", href: "/dashboard/pantry", icon: IconArchive, action: "Add Item", actionHref: "/dashboard/pantry" },
+  { label: "Groceries", href: "/dashboard/groceries", icon: IconShoppingCart, action: "Upload Receipt", actionHref: "/dashboard/pantry" },
+  { label: "Recipes", href: "/dashboard/recipes", icon: IconToolsKitchen2, action: "Find Recipe" },
 ] as const;
 
 const DEFAULT_NAV = NAV_ITEMS[0];
@@ -133,7 +136,24 @@ export default function AppLayout({ children }: AppLayoutProps) {
     [pathname]
   );
 
-  const userInitials = "U";
+  const {data:session} = authClient.useSession()
+  const userInitials = session?.user.name.charAt(0).toUpperCase();
+
+  const handleLogout = async () =>{
+    try {
+      await authClient.signOut().then(() => {
+        toast.success("Logged out successfully");
+        setTimeout(() => {
+
+          window.location.href = "/login";
+        }, 100);
+
+      });
+    } catch (error) {
+      console.error("Logout failed:", error);
+      toast.error("Logout failed");
+    }
+  }
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-background">
@@ -186,11 +206,14 @@ export default function AppLayout({ children }: AppLayoutProps) {
                 transition={{ duration: 0.15, delay: 0.05 }}
                 className="truncate text-sm text-muted-foreground"
               >
-                User
+               {session?.user.name}
               </motion.span>
             )}
           </AnimatePresence>
         </motion.div>
+        <div className="flex items-center gap-3 px-4 py-3">
+          <Button variant={'destructive'} className={`${isExpanded ? "w-full": "hidden"}`} onClick={handleLogout}><IconLogout /> Logout</Button>
+        </div>
       </motion.aside>
 
       {/* ── Content Area ──────────────────────────────────────────────────── */}
@@ -211,8 +234,8 @@ export default function AppLayout({ children }: AppLayoutProps) {
             </motion.h1>
           </AnimatePresence>
           {activeItem.actionHref || activeItem.actionHandler ? (
-            <Button 
-              size="sm" 
+            <Button
+              size="sm"
               onClick={activeItem.actionHandler}
               asChild={!!activeItem.actionHref}
             >
