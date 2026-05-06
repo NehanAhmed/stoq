@@ -50,6 +50,7 @@ const RecipeInput = () => {
   }
 
   const isLoading = form.formState.isSubmitting
+  const recipeInputValue = form.watch("recipeInput").trim()
 
   return (
     <motion.div
@@ -110,13 +111,13 @@ const RecipeInput = () => {
               className=""
             >
               <motion.div
-                whileHover={{ scale: !isLoading && form.watch("recipeInput").trim() ? 1.02 : 1 }}
-                whileTap={{ scale: !isLoading && form.watch("recipeInput").trim() ? 0.98 : 1 }}
+                whileHover={{ scale: !isLoading && recipeInputValue ? 1.02 : 1 }}
+                whileTap={{ scale: !isLoading && recipeInputValue ? 0.98 : 1 }}
                 transition={{ duration: 0.15 }}
               >
                 <Button
                   className="w-full py-6 px-8 min-w-35 gap-2"
-                  disabled={isLoading || !form.watch("recipeInput").trim()}
+                  disabled={isLoading || !recipeInputValue}
                 >
                   <AnimatePresence mode="wait">
                     {isLoading ? (

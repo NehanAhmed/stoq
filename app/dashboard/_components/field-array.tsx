@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ManualGroceryItem, ManualGroceryForm } from "@/lib/schemas/grocery.schemas"
 import { Control, Controller, UseFieldArrayReturn, UseFormRegister } from "react-hook-form"
+import { fadeUpVariants, staggerContainer } from "@/lib/animations"
 
 interface FieldArrayProps {
   control: Control<ManualGroceryForm>
@@ -41,12 +42,6 @@ function getDefaultItem(): ManualGroceryItem {
   }
 }
 
-const fadeUpVariants = {
-  initial: { opacity: 0, y: 10 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.25, ease: [0.25, 0.1, 0.25, 1] as const },
-}
-
 function FieldArray({ control, register, fields, append, remove }: FieldArrayProps) {
   return (
     <motion.div
@@ -69,45 +64,42 @@ function FieldArray({ control, register, fields, append, remove }: FieldArrayPro
       </motion.div>
 
       {/* Items */}
-      <div className="space-y-3">
+      <motion.div 
+        variants={staggerContainer}
+        initial="initial"
+        animate="animate"
+        className="space-y-3"
+      >
         <AnimatePresence mode="popLayout">
           {fields.map((field, index) => (
             <motion.div
               key={field.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
+              variants={fadeUpVariants}
+              initial="initial"
+              animate="animate"
               exit={{ opacity: 0, y: -10, height: 0 }}
-              transition={{ duration: 0.2, delay: index * 0.05 }}
+              transition={{ duration: 0.2 }}
               className="grid grid-cols-[1fr_120px_100px_40px] gap-3"
             >
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.15 }}
-              >
+              <div>
                 <Input 
                   {...register(`items.${index}.name`)} 
                   placeholder="Item name" 
                   className="transition-all duration-200 focus:scale-[1.02]"
                 />
-              </motion.div>
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.15 }}
-              >
+              </div>
+              <div>
                 <Input 
                   {...register(`items.${index}.quantity`)} 
                   placeholder="Qty" 
                   className="transition-all duration-200 focus:scale-[1.02]"
                 />
-              </motion.div>
+              </div>
               <Controller
                 name={`items.${index}.unit`}
                 control={control}
                 render={({ field: { onChange, value } }) => (
-                  <motion.div
-                    whileHover={{ scale: 1.02 }}
-                    transition={{ duration: 0.15 }}
-                  >
+                  <div>
                     <Select
                       value={value ?? ""}
                       onValueChange={(val) => onChange(val === "" ? null : val)}
@@ -123,7 +115,7 @@ function FieldArray({ control, register, fields, append, remove }: FieldArrayPro
                         ))}
                       </SelectContent>
                     </Select>
-                  </motion.div>
+                  </div>
                 )}
               />
               <motion.div
@@ -144,7 +136,7 @@ function FieldArray({ control, register, fields, append, remove }: FieldArrayPro
             </motion.div>
           ))}
         </AnimatePresence>
-      </div>
+      </motion.div>
 
       {/* Add Item Button */}
       <motion.div

@@ -6,24 +6,19 @@ import Link from 'next/link'
 import { RecipeParam } from '@/lib/types/recipe.types'
 import { IconChevronRight, IconClock, IconChefHat } from '@tabler/icons-react'
 import React from 'react'
+import { fadeUpVariants } from '@/lib/animations'
 
 interface RecipeCardProps extends RecipeParam {
   id: string
 }
 
-const fadeUpVariants = {
-  initial: { opacity: 0, y: 10 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.25, ease: [0.25, 0.1, 0.25, 1] as const },
-}
-
 const RecipeCard = ({ id, name, tagline }: RecipeCardProps) => {
   return (
     <motion.div
-      initial={fadeUpVariants.initial}
-      animate={fadeUpVariants.animate}
-      whileHover={{ y: -4 }}
-      transition={{ duration: 0.2 }}
+      variants={fadeUpVariants}
+      initial="initial"
+      animate="animate"
+      whileHover={{ y: -4, transition: { duration: 0.2 } }}
     >
       <Card className="border-border/50 bg-card/80 backdrop-blur-sm h-full hover:shadow-lg transition-all duration-200">
         <CardContent className="p-6 space-y-4">
@@ -42,17 +37,7 @@ const RecipeCard = ({ id, name, tagline }: RecipeCardProps) => {
             </div>
           </div>
 
-          {/* Recipe Meta */}
-          <div className="flex items-center gap-4 text-xs text-muted-foreground">
-            <div className="flex items-center gap-1">
-              <IconClock className="h-3 w-3" />
-              <span>Ready in 30 mins</span>
-            </div>
-            <Badge variant="secondary" className="text-xs">
-              Easy
-            </Badge>
-          </div>
-
+          
           {/* Action Button */}
           <motion.div
             whileHover={{ scale: 1.02 }}

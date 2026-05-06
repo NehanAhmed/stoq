@@ -46,6 +46,7 @@ const ReceiptScan = () => {
 
   const {
     control: itemsControl,
+    register: itemsRegister,
     handleSubmit: handleItemsSubmit,
     reset: resetItems,
     formState: { isSubmitting: isItemsSubmitting },
@@ -263,7 +264,7 @@ const ReceiptScan = () => {
           >
             <FieldArray 
               control={itemsControl}
-              register={itemsControl.register}
+              register={itemsRegister}
               fields={fields}
               append={append}
               remove={remove}
