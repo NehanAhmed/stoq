@@ -2,7 +2,7 @@
 
 import { headers } from "next/headers"
 import { auth } from "../auth"
-import { getAllPantryItemsByHouseId, getAllRecipesByHouseId, saveRecipeToDatabase } from "../services/recipe.services"
+import { getAllPantryItemsByHouseId, getAllRecipesByHouseId, getRecipeById, saveRecipeToDatabase } from "../services/recipe.services"
 import { getHouseIdByUserId } from "./receipt.actions"
 import { AIInput } from "../types/recipe.types"
 import { client } from "../openrouter"
@@ -49,7 +49,7 @@ export const createRecipeAction = async (input: string) => {
         }
 
         const validated = aiRecipeResponseSchema.safeParse(parsed);
-        
+
 
         if (!validated.success) {
             console.error("AI response validation failed:", z.flattenError(validated.error));
@@ -103,3 +103,51 @@ export const fetchAllRecipeByHouseId = async (houseId: string) => {
         throw error;
     }
 }
+
+export const fetchRecipeByRecipeId = async (recipeId: string) => {
+    try {
+        const session = await auth.api.getSession({
+            headers: await headers(),
+        })
+
+        const userId = session?.user.id
+        if (!userId) {
+            return { success: false, error: "User not authenticated" }
+        }
+
+        const recipe = await getRecipeById(recipeId);
+
+        if (recipe.length === 0) {
+            return { success: false, error: "Recipe not found" }
+        }
+
+
+        return { success: true, data: recipe };
+    } catch (error) {
+        console.error("Error fetching recipe:", error);
+        throw error;
+    }
+}
+
+// export const cookRecipe = async (recipeId: string) => {
+//     try {
+//         const session = await auth.api.getSession({
+//             headers: await headers(),
+//         })
+
+//         const userId = session?.user.id
+//         if (!userId) {
+//             return { success: false, error: "User not authen    ticated" }
+//         }
+//         const recipe = await getRecipeById(recipeId);
+//         if (recipe.length === 0) {
+//             return { success: false, error: "Recipe not found" }
+//         }
+//         await removeIngredientsFromInventory(recipe[0].houseId, recipe[0].ingredients);
+        
+//         return { success: true };
+//     } catch (error) {
+//         console.error("Error cooking recipe:", error);
+//         throw error;
+//     }
+// }

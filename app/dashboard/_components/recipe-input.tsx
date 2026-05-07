@@ -108,7 +108,7 @@ const RecipeInput = () => {
               initial={fadeUpVariants.initial}
               animate={fadeUpVariants.animate}
               transition={{ ...fadeUpVariants.transition, delay: 0.3 }}
-              className=""
+              className="w"
             >
               <motion.div
                 whileHover={{ scale: !isLoading && recipeInputValue ? 1.02 : 1 }}
