@@ -43,3 +43,16 @@ export const getAllRecipesByHouseId = async (houseId: string) => {
         throw error;
     }
 };
+
+export const getRecipeById = async (recipeId: string) => {
+    try {
+        const recipe = await db
+            .select()
+            .from(recipes)
+            .where(eq(recipes.id, recipeId));
+        return recipe;
+    } catch (error) {
+        console.error("Error fetching recipe:", error);
+        throw error;
+    }
+};
