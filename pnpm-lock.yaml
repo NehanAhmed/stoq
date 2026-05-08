@@ -18,7 +18,7 @@ importers:
         specifier: ^1.0.2
         version: 1.0.2
       '@openrouter/sdk':
-        specifier: ^0.12.24
+        specifier: 0.12.24
         version: 0.12.24
       '@tabler/icons-react':
         specifier: ^3.41.1
