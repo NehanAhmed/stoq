@@ -14,4 +14,4 @@ export interface RecipeParam {
   instructions: string
   createdAt: Date
   updatedAt: Date
-}x  
+}
