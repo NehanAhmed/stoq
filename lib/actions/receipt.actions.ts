@@ -18,7 +18,7 @@ function normalizeReceiptItems(items: ReceiptItem[]): { normalized: ReceiptItem[
     const existing = grouped.get(key)
 
     if (existing) {
-      existing.totalQuantity += item.quantity
+      existing.totalQuantity += parseFloat(item.quantity.toString())
     } else {
       // Check for unit mismatch with different key but same name
       for (const [, entry] of grouped) {
@@ -27,13 +27,13 @@ function normalizeReceiptItems(items: ReceiptItem[]): { normalized: ReceiptItem[
           break
         }
       }
-      grouped.set(key, { ...item, totalQuantity: item.quantity })
+      grouped.set(key, { ...item, totalQuantity: parseFloat(item.quantity.toString()) })
     }
   }
 
   const normalized = Array.from(grouped.values()).map(item => ({
     name: item.name,
-    quantity: item.totalQuantity,
+    quantity: item.totalQuantity.toString(),
     unit: item.unit,
   }))
 
